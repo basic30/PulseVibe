@@ -1,0 +1,157 @@
+/* General Styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background-color: #121212; /* Dark background */
+    color: white; /* White text */
+    text-align: center;
+}
+
+/* Header */
+header {
+    background-color: #FF0000; /* Red background */
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Search Bar */
+#search-container {
+    margin: 20px auto;
+    max-width: 600px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+#search {
+    width: 70%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+#search-button {
+    padding: 10px 20px;
+    background-color: #FF0000; /* Red button */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+/* Search Results */
+#music-list {
+    margin: 20px auto;
+    max-width: 600px;
+}
+
+.music-item {
+    padding: 10px;
+    border: 1px solid #ccc;
+    margin: 10px 0;
+    background-color: #282828; /* Dark background */
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.music-item:hover {
+    background-color: #404040; /* Lighter gray on hover */
+}
+
+/* Playlist Section */
+#toggle-playlist-btn {
+    margin: 20px auto;
+    padding: 10px;
+    background-color: #FF0000; /* Red background */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    display: inline-block;
+}
+
+#playlist-section {
+    margin: 20px auto;
+    max-width: 600px;
+    padding: 10px;
+    background-color: #282828; /* Dark background */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#temp-playlist .playlist-item {
+    padding: 10px;
+    border: 1px solid #ccc;
+    margin: 10px 0;
+    background-color: #404040; /* Lighter gray for items */
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#temp-playlist .playlist-item h3 {
+    margin: 0;
+    font-size: 14px;
+}
+
+#temp-playlist .playlist-item button {
+    padding: 5px 10px;
+    background-color: #e74c3c; /* Red background */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Music Player */
+#music-player {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #282828;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    border: 2px solid white; /* White border */
+    border-radius: 10px; /* Optional: rounded corners */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6); /* Add box shadow */
+}
+
+#channel-logo {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 1px solid #ccc;
+}
+
+#current-track {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+    font-size: 16px;
+}
+
+#music-player button {
+    padding: 10px;
+    background-color: #FF0000; /* Red buttons */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#music-player button:hover {
+    color: #cc0000; /* Darker red on hover */
+}
