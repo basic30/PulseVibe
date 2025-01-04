@@ -3,6 +3,8 @@ let player; // YouTube IFrame Player instance
 let currentIndex = 0;
 let isPlaying = false;
 let tempPlaylist = []; // Temporary playlist array
+let draggedIndex = null; // For drag-and-drop
+let longPressTimeout = null; // For detecting long press
 
 // Load the YouTube IFrame API and create the hidden player
 function onYouTubeIframeAPIReady() {
@@ -96,26 +98,6 @@ function removeFromTempPlaylist(index) {
     updateTempPlaylistUI();
 }
 
-// Update the UI to display the temporary playlist
-function updateTempPlaylistUI() {
-    const tempPlaylistEl = document.getElementById('temp-playlist');
-    tempPlaylistEl.innerHTML = '';
-
-    tempPlaylist.forEach((video, index) => {
-        const playlistItem = document.createElement('div');
-        playlistItem.className = 'playlist-item';
-        playlistItem.innerHTML = `
-            <h3>${video.snippet.title}</h3>
-            <button onclick="removeFromTempPlaylist(${index})">Remove</button>
-        `;
-        playlistItem.onclick = () => {
-            currentIndex = index; // Update the current index
-            playMusic(video);
-        };
-        tempPlaylistEl.appendChild(playlistItem);
-    });
-}
-
 // Save the playlist to localStorage
 function savePlaylistToLocalStorage() {
     localStorage.setItem('tempPlaylist', JSON.stringify(tempPlaylist));
@@ -130,6 +112,84 @@ function loadPlaylistFromLocalStorage() {
         updateTempPlaylistUI();
         console.log('Playlist loaded from localStorage');
     }
+}
+
+// Long press handlers
+function handleMouseDown(event) {
+    longPressTimeout = setTimeout(() => {
+        // Enable dragging after a long press
+        event.target.draggable = true;
+        event.target.classList.add('dragging');
+        event.target.dispatchEvent(new Event('dragstart')); // Simulate dragstart event
+    }, 500); // 500ms for long press
+
+    event.target.addEventListener('mouseup', handleMouseUp);
+    event.target.addEventListener('mouseleave', handleMouseUp);
+}
+
+function handleMouseUp(event) {
+    clearTimeout(longPressTimeout);
+    event.target.draggable = false; // Disable dragging on release
+    event.target.removeEventListener('mouseup', handleMouseUp);
+    event.target.removeEventListener('mouseleave', handleMouseUp);
+}
+
+// Drag-and-drop handlers
+function handleDragStart(event) {
+    draggedIndex = event.target.dataset.index;
+}
+
+function handleDragOver(event) {
+    event.preventDefault(); // Allow dropping
+    event.target.classList.add('drag-over');
+}
+
+function handleDrop(event) {
+    event.preventDefault();
+    event.target.classList.remove('drag-over');
+
+    const targetIndex = event.target.dataset.index;
+    if (draggedIndex !== null && targetIndex !== null) {
+        // Reorder the playlist
+        const [movedItem] = tempPlaylist.splice(draggedIndex, 1);
+        tempPlaylist.splice(targetIndex, 0, movedItem);
+
+        savePlaylistToLocalStorage();
+        updateTempPlaylistUI(); // Refresh the UI
+    }
+
+    draggedIndex = null;
+}
+
+// Update the UI to display the temporary playlist
+function updateTempPlaylistUI() {
+    const tempPlaylistEl = document.getElementById('temp-playlist');
+    tempPlaylistEl.innerHTML = '';
+
+    tempPlaylist.forEach((video, index) => {
+        const playlistItem = document.createElement('div');
+        playlistItem.className = 'playlist-item';
+        playlistItem.dataset.index = index; // Store the index as a dataset
+
+        playlistItem.innerHTML = `
+            <h3>${video.snippet.title}</h3>
+            <button onclick="removeFromTempPlaylist(${index})">Remove</button>
+        `;
+
+        // Attach long press and drag-and-drop listeners
+        playlistItem.addEventListener('mousedown', handleMouseDown);
+        playlistItem.addEventListener('dragstart', handleDragStart);
+        playlistItem.addEventListener('dragover', handleDragOver);
+        playlistItem.addEventListener('drop', handleDrop);
+
+        // Play music on click
+        playlistItem.onclick = () => {
+            currentIndex = index; // Update the current index
+            playMusic(video);
+        };
+
+        tempPlaylistEl.appendChild(playlistItem);
+    });
 }
 
 // Toggle playlist visibility
