@@ -112,6 +112,10 @@ header p {
 #temp-playlist .playlist-item h3 {
     margin: 0;
     font-size: 14px;
+     background: linear-gradient(to right, #ff007f, #0FFCBE);/* Gradient color */
+    -webkit-background-clip: text; /* Ensures the gradient applies to text */
+    -webkit-text-fill-color: transparent; /* Makes text background visible */
+    text-fill-color: transparent; /* For non-WebKit browsers (optional, not widely supported yet) */
 }
 
 #temp-playlist .playlist-item button {
