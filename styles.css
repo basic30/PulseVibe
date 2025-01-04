@@ -13,7 +13,7 @@ body {
 header {
     background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); /* Gradient background */
     color: #ff007f; /* Neon pink text color */
-    padding: 20px;
+    padding: 16px;
     text-align: center;
     font-family: 'Arial', sans-serif; /* Optional for a clean look */
 }
