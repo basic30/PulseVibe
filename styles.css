@@ -11,10 +11,23 @@ body {
 
 /* Header */
 header {
-    background-color: #FF0000; /* Red background */
-    color: white;
+    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); /* Gradient background */
+    color: #ff007f; /* Neon pink text color */
     padding: 20px;
     text-align: center;
+    font-family: 'Arial', sans-serif; /* Optional for a clean look */
+}
+
+header h1 {
+    font-size: 2em;
+    margin: 0;
+    color: #ff007f;
+    text-shadow: 2px 2px 5px #000000; /* Black shadow for depth */
+}
+
+header p {
+    color: #ffffff; /* Optional secondary text color for contrast */
+    text-shadow: 1px 1px 3px #000000; /* Subtle shadow for clarity */
 }
 
 /* Search Bar */
