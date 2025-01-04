@@ -3,6 +3,7 @@ let player; // YouTube IFrame Player instance
 let currentIndex = 0;
 let isPlaying = false;
 let tempPlaylist = []; // Temporary playlist array
+let isPlayerExpanded = false;
 
 // Load the YouTube IFrame API and create the hidden player
 function onYouTubeIframeAPIReady() {
@@ -132,66 +133,86 @@ function loadPlaylistFromLocalStorage() {
     }
 }
 
-// Toggle playlist visibility
-const togglePlaylistBtn = document.getElementById('toggle-playlist-btn');
-const playlistSection = document.getElementById('playlist-section');
+// Expand the player to full screen
+function expandPlayer(songName, singerName) {
+    const musicPlayer = document.getElementById('music-player');
+    musicPlayer.style.position = 'fixed';
+    musicPlayer.style.top = '0';
+    musicPlayer.style.left = '0';
+    musicPlayer.style.width = '100vw';
+    musicPlayer.style.height = '100vh';
+    musicPlayer.style.backgroundColor = '#121212';
+    musicPlayer.style.display = 'flex';
+    musicPlayer.style.flexDirection = 'column';
+    musicPlayer.style.justifyContent = 'space-between';
+    musicPlayer.style.padding = '20px';
+    musicPlayer.style.color = '#fff';
 
-togglePlaylistBtn.addEventListener('click', () => {
-    if (playlistSection.style.display === 'none') {
-        playlistSection.style.display = 'block';
-        togglePlaylistBtn.textContent = 'Hide Playlist';
-    } else {
-        playlistSection.style.display = 'none';
-        togglePlaylistBtn.textContent = 'Your Playlist';
-    }
-});
+    // Add song details and minimize button
+    const songDetailsContainer = document.createElement('div');
+    songDetailsContainer.style.flex = '1';
+    songDetailsContainer.style.display = 'flex';
+    songDetailsContainer.style.flexDirection = 'column';
+    songDetailsContainer.style.justifyContent = 'center';
+    songDetailsContainer.style.alignItems = 'center';
 
-// Update play/pause button state
-function updatePlayPauseButton() {
-    const playPauseButton = document.getElementById('play-pause');
-    playPauseButton.textContent = isPlaying ? '⏸️' : '▶️';
+    const songTitle = document.createElement('h1');
+    songTitle.textContent = songName;
+    songTitle.style.fontSize = '24px';
+    songTitle.style.margin = '10px 0';
+
+    const singer = document.createElement('p');
+    singer.textContent = singerName;
+    singer.style.fontSize = '16px';
+    singer.style.color = '#aaa';
+
+    songDetailsContainer.appendChild(songTitle);
+    songDetailsContainer.appendChild(singer);
+
+    const minimizeButton = document.createElement('button');
+    minimizeButton.textContent = '⬇️';
+    minimizeButton.style.position = 'absolute';
+    minimizeButton.style.top = '20px';
+    minimizeButton.style.left = '20px';
+    minimizeButton.style.background = 'none';
+    minimizeButton.style.border = 'none';
+    minimizeButton.style.color = 'white';
+    minimizeButton.style.fontSize = '24px';
+    minimizeButton.style.cursor = 'pointer';
+    minimizeButton.onclick = () => minimizePlayer();
+    musicPlayer.appendChild(minimizeButton);
+    musicPlayer.appendChild(songDetailsContainer);
+
+    isPlayerExpanded = true;
 }
 
-// Play/pause button event
-document.getElementById('play-pause').addEventListener('click', () => {
-    if (isPlaying) {
-        player.pauseVideo();
-        isPlaying = false;
-    } else {
-        player.playVideo();
-        isPlaying = true;
-    }
-    updatePlayPauseButton();
-});
+// Minimize the player back to its original state
+function minimizePlayer() {
+    const musicPlayer = document.getElementById('music-player');
+    musicPlayer.style.position = 'fixed';
+    musicPlayer.style.bottom = '0';
+    musicPlayer.style.left = '0';
+    musicPlayer.style.width = '100%';
+    musicPlayer.style.height = '60px';
+    musicPlayer.style.backgroundColor = '#282828';
+    musicPlayer.style.display = 'flex';
+    musicPlayer.style.flexDirection = 'row';
+    musicPlayer.style.justifyContent = 'space-between';
+    musicPlayer.style.alignItems = 'center';
+    musicPlayer.style.padding = '10px';
 
-// Previous button event
-document.getElementById('prev').addEventListener('click', () => {
-    playPrevious();
-});
+    const songDetailsContainer = document.querySelector('#music-player div:first-child');
+    const minimizeButton = document.querySelector('#music-player button:first-child');
+    if (songDetailsContainer) songDetailsContainer.remove();
+    if (minimizeButton) minimizeButton.remove();
 
-// Next button event
-document.getElementById('next').addEventListener('click', () => {
-    playNext();
-});
+    isPlayerExpanded = false;
+}
 
-// Search button event
-document.getElementById('search-button').addEventListener('click', () => {
-    const query = document.getElementById('search').value;
-    if (query.trim()) {
-        fetchMusic(query);
-    }
-});
-
-// Clear playlist button
-document.getElementById('clear-playlist').addEventListener('click', () => {
-    tempPlaylist = [];
-    savePlaylistToLocalStorage();
-    updateTempPlaylistUI();
-    console.log('Playlist cleared');
-});
-
-// Hide player on page load
-document.getElementById('music-player').style.display = 'none';
+// Event listeners
+document.getElementById('play-pause').addEventListener('click', updatePlayPauseButton);
+document.getElementById('prev').addEventListener('click', playPrevious);
+document.getElementById('next').addEventListener('click', playNext);
 
 // Load playlist on page load
 window.onload = loadPlaylistFromLocalStorage;
