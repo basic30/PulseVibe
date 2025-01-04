@@ -27,7 +27,7 @@ function onPlayerStateChange(event) {
 // Fetch music based on search query
 async function fetchMusic(query) {
     try {
-        const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=${encodeURIComponent(query)}&maxResults=2&key=${apiKey}`);
+        const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=${encodeURIComponent(query)}&maxResults=5&key=${apiKey}`);
         const data = await response.json();
         displayMusic(data.items);
     } catch (error) {
@@ -148,7 +148,6 @@ function expandPlayer(songName, singerName) {
     musicPlayer.style.padding = '20px';
     musicPlayer.style.color = '#fff';
 
-    // Add song details and minimize button
     const songDetailsContainer = document.createElement('div');
     songDetailsContainer.style.flex = '1';
     songDetailsContainer.style.display = 'flex';
@@ -209,10 +208,52 @@ function minimizePlayer() {
     isPlayerExpanded = false;
 }
 
+// Toggle playlist visibility
+document.getElementById('toggle-playlist-btn').addEventListener('click', () => {
+    const playlistSection = document.getElementById('playlist-section');
+    if (playlistSection.style.display === 'none') {
+        playlistSection.style.display = 'block';
+        togglePlaylistBtn.textContent = 'Hide Playlist';
+    } else {
+        playlistSection.style.display = 'none';
+        togglePlaylistBtn.textContent = 'Your Playlist';
+    }
+});
+
+// Update play/pause button state
+function updatePlayPauseButton() {
+    const playPauseButton = document.getElementById('play-pause');
+    playPauseButton.textContent = isPlaying ? '⏸️' : '▶️';
+}
+
 // Event listeners
-document.getElementById('play-pause').addEventListener('click', updatePlayPauseButton);
+document.getElementById('play-pause').addEventListener('click', () => {
+    if (isPlaying) {
+        player.pauseVideo();
+        isPlaying = false;
+    } else {
+        player.playVideo();
+        isPlaying = true;
+    }
+    updatePlayPauseButton();
+});
 document.getElementById('prev').addEventListener('click', playPrevious);
 document.getElementById('next').addEventListener('click', playNext);
+document.getElementById('search-button').addEventListener('click', () => {
+    const query = document.getElementById('search').value;
+    if (query.trim()) {
+        fetchMusic(query);
+    }
+});
+document.getElementById('clear-playlist').addEventListener('click', () => {
+    tempPlaylist = [];
+    savePlaylistToLocalStorage();
+    updateTempPlaylistUI();
+    console.log('Playlist cleared');
+});
+
+// Hide player on page load
+document.getElementById('music-player').style.display = 'none';
 
 // Load playlist on page load
 window.onload = loadPlaylistFromLocalStorage;
