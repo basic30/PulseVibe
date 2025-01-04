@@ -3,7 +3,6 @@ let player; // YouTube IFrame Player instance
 let currentIndex = 0;
 let isPlaying = false;
 let tempPlaylist = []; // Temporary playlist array
-let isPlayerExpanded = false;
 
 // Load the YouTube IFrame API and create the hidden player
 function onYouTubeIframeAPIReady() {
@@ -57,11 +56,7 @@ function playMusic(video) {
     document.getElementById('channel-logo').src = video.snippet.thumbnails.default.url; // Set channel logo
 
     // Show the player
-    const musicPlayer = document.getElementById('music-player');
-    musicPlayer.style.display = 'flex';
-
-    // Add functionality to expand the player when clicked
-    musicPlayer.onclick = () => expandPlayer(video.snippet.title, video.snippet.channelTitle);
+    document.getElementById('music-player').style.display = 'flex';
 
     isPlaying = true;
     updatePlayPauseButton();
@@ -137,84 +132,11 @@ function loadPlaylistFromLocalStorage() {
     }
 }
 
-// Expand the player to full screen
-function expandPlayer(songName, singerName) {
-    const musicPlayer = document.getElementById('music-player');
-    musicPlayer.style.position = 'fixed';
-    musicPlayer.style.top = '0';
-    musicPlayer.style.left = '0';
-    musicPlayer.style.width = '100vw';
-    musicPlayer.style.height = '100vh';
-    musicPlayer.style.backgroundColor = '#121212';
-    musicPlayer.style.display = 'flex';
-    musicPlayer.style.flexDirection = 'column';
-    musicPlayer.style.justifyContent = 'space-between';
-    musicPlayer.style.padding = '20px';
-    musicPlayer.style.color = '#fff';
-
-    const songDetailsContainer = document.createElement('div');
-    songDetailsContainer.style.flex = '1';
-    songDetailsContainer.style.display = 'flex';
-    songDetailsContainer.style.flexDirection = 'column';
-    songDetailsContainer.style.justifyContent = 'center';
-    songDetailsContainer.style.alignItems = 'center';
-
-    const songTitle = document.createElement('h1');
-    songTitle.textContent = songName;
-    songTitle.style.fontSize = '24px';
-    songTitle.style.margin = '10px 0';
-
-    const singer = document.createElement('p');
-    singer.textContent = singerName;
-    singer.style.fontSize = '16px';
-    singer.style.color = '#aaa';
-
-    songDetailsContainer.appendChild(songTitle);
-    songDetailsContainer.appendChild(singer);
-
-    const minimizeButton = document.createElement('button');
-    minimizeButton.textContent = '⬇️';
-    minimizeButton.style.position = 'absolute';
-    minimizeButton.style.top = '20px';
-    minimizeButton.style.left = '20px';
-    minimizeButton.style.background = 'none';
-    minimizeButton.style.border = 'none';
-    minimizeButton.style.color = 'white';
-    minimizeButton.style.fontSize = '24px';
-    minimizeButton.style.cursor = 'pointer';
-    minimizeButton.onclick = () => minimizePlayer();
-    musicPlayer.appendChild(minimizeButton);
-    musicPlayer.appendChild(songDetailsContainer);
-
-    isPlayerExpanded = true;
-}
-
-// Minimize the player back to its original state
-function minimizePlayer() {
-    const musicPlayer = document.getElementById('music-player');
-    musicPlayer.style.position = 'fixed';
-    musicPlayer.style.bottom = '0';
-    musicPlayer.style.left = '0';
-    musicPlayer.style.width = '100%';
-    musicPlayer.style.height = '60px';
-    musicPlayer.style.backgroundColor = '#282828';
-    musicPlayer.style.display = 'flex';
-    musicPlayer.style.flexDirection = 'row';
-    musicPlayer.style.justifyContent = 'space-between';
-    musicPlayer.style.alignItems = 'center';
-    musicPlayer.style.padding = '10px';
-
-    const songDetailsContainer = document.querySelector('#music-player div:first-child');
-    const minimizeButton = document.querySelector('#music-player button:first-child');
-    if (songDetailsContainer) songDetailsContainer.remove();
-    if (minimizeButton) minimizeButton.remove();
-
-    isPlayerExpanded = false;
-}
-
 // Toggle playlist visibility
-document.getElementById('toggle-playlist-btn').addEventListener('click', () => {
-    const playlistSection = document.getElementById('playlist-section');
+const togglePlaylistBtn = document.getElementById('toggle-playlist-btn');
+const playlistSection = document.getElementById('playlist-section');
+
+togglePlaylistBtn.addEventListener('click', () => {
     if (playlistSection.style.display === 'none') {
         playlistSection.style.display = 'block';
         togglePlaylistBtn.textContent = 'Hide Playlist';
@@ -230,7 +152,7 @@ function updatePlayPauseButton() {
     playPauseButton.textContent = isPlaying ? '⏸️' : '▶️';
 }
 
-// Event listeners
+// Play/pause button event
 document.getElementById('play-pause').addEventListener('click', () => {
     if (isPlaying) {
         player.pauseVideo();
@@ -241,14 +163,26 @@ document.getElementById('play-pause').addEventListener('click', () => {
     }
     updatePlayPauseButton();
 });
-document.getElementById('prev').addEventListener('click', playPrevious);
-document.getElementById('next').addEventListener('click', playNext);
+
+// Previous button event
+document.getElementById('prev').addEventListener('click', () => {
+    playPrevious();
+});
+
+// Next button event
+document.getElementById('next').addEventListener('click', () => {
+    playNext();
+});
+
+// Search button event
 document.getElementById('search-button').addEventListener('click', () => {
     const query = document.getElementById('search').value;
     if (query.trim()) {
         fetchMusic(query);
     }
 });
+
+// Clear playlist button
 document.getElementById('clear-playlist').addEventListener('click', () => {
     tempPlaylist = [];
     savePlaylistToLocalStorage();
