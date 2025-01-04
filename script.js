@@ -27,7 +27,7 @@ function onPlayerStateChange(event) {
 // Fetch music based on search query
 async function fetchMusic(query) {
     try {
-        const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=${encodeURIComponent(query)}&maxResults=5&key=${apiKey}`);
+        const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=${encodeURIComponent(query)}&maxResults=2&key=${apiKey}`);
         const data = await response.json();
         displayMusic(data.items);
     } catch (error) {
@@ -57,7 +57,11 @@ function playMusic(video) {
     document.getElementById('channel-logo').src = video.snippet.thumbnails.default.url; // Set channel logo
 
     // Show the player
-    document.getElementById('music-player').style.display = 'flex';
+    const musicPlayer = document.getElementById('music-player');
+    musicPlayer.style.display = 'flex';
+
+    // Add functionality to expand the player when clicked
+    musicPlayer.onclick = () => expandPlayer(video.snippet.title, video.snippet.channelTitle);
 
     isPlaying = true;
     updatePlayPauseButton();
