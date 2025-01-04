@@ -155,12 +155,3 @@ header {
 #music-player button:hover {
     color: #cc0000; /* Darker red on hover */
 }
-
-.dragging {
-    opacity: 0.7;
-    cursor: grabbing;
-}
-
-.drag-over {
-    border: 2px dashed #007BFF;
-}
