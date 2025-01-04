@@ -105,7 +105,7 @@ header p {
     -webkit-background-clip: text; /* Ensures the gradient applies to text */
     -webkit-text-fill-color: transparent; /* Makes text background visible */
     text-fill-color: transparent; /* For non-WebKit browsers (optional, not widely supported yet) */
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 
 #temp-playlist .playlist-item {
