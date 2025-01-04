@@ -98,6 +98,15 @@ header p {
     border-radius: 5px;
 }
 
+#playlist-section h2 {
+    margin: 0;
+    font-size: 24px;
+    background: linear-gradient(to right, #ff007f, #0FFCBE); /* Gradient color */
+    -webkit-background-clip: text; /* Ensures the gradient applies to text */
+    -webkit-text-fill-color: transparent; /* Makes text background visible */
+    text-fill-color: transparent; /* For non-WebKit browsers (optional, not widely supported yet) */
+}
+
 #temp-playlist .playlist-item {
     padding: 10px;
     border: 1px solid #ccc;
