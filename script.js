@@ -190,6 +190,18 @@ document.getElementById('clear-playlist').addEventListener('click', () => {
     console.log('Playlist cleared');
 });
 
+let audioElement = document.querySelector("audio");
+
+if (audioElement) {
+    audioElement.addEventListener("play", function() {
+        let songTitle = document.querySelector(".song-title").innerText;
+
+        if (typeof AndroidBridge !== "undefined" && AndroidBridge.updateNotification) {
+            AndroidBridge.updateNotification(songTitle);
+        }
+    });
+}
+
 // Hide player on page load
 document.getElementById('music-player').style.display = 'none';
 
