@@ -55,7 +55,7 @@ function onYouTubeIframeAPIReady() {
 // Fetch Random Songs using YouTube Data API
 function fetchRandomSongs() {
     // Example of a random query or you can replace with any query like "random songs"
-    const query = "random songs"; 
+    const query = "popular songs"; 
 
     const apiUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${query}&key=${YOUTUBE_API_KEY}&type=video`;
 
