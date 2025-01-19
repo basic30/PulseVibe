@@ -5,53 +5,92 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pulse Vibe</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
 </head>
 <body>
     <header>
         <h1>__Pulse Vibe__</h1>
-        <p>Feel the vibes!</p>
-        <img id="profile-pic" src="" alt="User Profile" />
-    <div id="logout-menu">
-        <button id="logout-button">Log Out</button>
-    </div>
+        <p>Feel the vibes !</p>
+        <div id="auth-section">
+            <button id="login-btn" style="display: block;">Sign In</button>
+            <img id="user-profile" src="" alt="User Profile" style="display: none;">
+        </div>
     </header>
     <main>
-        <!-- Search Bar -->
         <div id="search-container">
             <input type="text" id="search" placeholder="Search for music..." />
             <button id="search-button">🔍</button>
         </div>
 
-        <!-- Search Results -->
         <div id="music-list"></div>
 
-        <!-- Your Playlist Button -->
         <button id="toggle-playlist-btn">Your Playlist</button>
 
-        <!-- Permanent Playlist Section -->
-        <section id="playlist-section" style="display: none;"> <!-- Hidden by default -->
+        <section id="playlist-section" style="display: none;">
             <h2>Your Playlist</h2>
-            <div id="permanent-playlist"></div> <!-- Dynamic playlist content -->
+            <div id="temp-playlist"></div>
+            <button id="clear-playlist">Clear Playlist</button>
         </section>
-    </main>    
-    
+    </main>
 
-    <!-- Music Player Controls -->
     <div id="music-player">
         <img id="channel-logo" src="" alt="Channel Logo" />
-        <div id="current-track">No track playing</div> <!-- Music name -->
+        <div id="current-track">No track playing</div>
         <button id="prev">⏮️</button>
         <button id="play-pause">▶️</button>
         <button id="next">⏭️</button>
     </div>
 
-    <!-- Hidden YouTube Player -->
     <div id="hidden-player"></div>
 
+    <script>
+        const firebaseConfig = {
+    apiKey: "AIzaSyDwxKZSVy687iV26zw4Uu2N8-jLQOMo0HU",
+    authDomain: "pulse-vibe-53ebb.firebaseapp.com",
+    projectId: "pulse-vibe-53ebb",
+    storageBucket: "pulse-vibe-53ebb.firebasestorage.app",
+    messagingSenderId: "93642702141",
+    appId: "1:93642702141:web:b278ba16a754def6969954",
+    measurementId: "G-D365D3GWK3"
+  };
+
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        const loginBtn = document.getElementById("login-btn");
+        const userProfile = document.getElementById("user-profile");
+
+        loginBtn.addEventListener("click", async () => {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            try {
+                const result = await auth.signInWithPopup(provider);
+                const user = result.user;
+                displayUserInfo(user);
+            } catch (error) {
+                console.error("Error during login:", error);
+            }
+        });
+
+        function displayUserInfo(user) {
+            if (user) {
+                loginBtn.style.display = "none";
+                userProfile.style.display = "block";
+                userProfile.src = user.photoURL;
+                console.log(`Welcome, ${user.displayName}`);
+            }
+        }
+
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                displayUserInfo(user);
+            } else {
+                loginBtn.style.display = "block";
+                userProfile.style.display = "none";
+            }
+        });
+    </script>
     <script src="script.js"></script>
 </body>
 </html>
