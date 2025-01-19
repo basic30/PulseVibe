@@ -1,13 +1,13 @@
 // Firebase Configuration
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_AUTH_DOMAIN",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_STORAGE_BUCKET",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID",
-    databaseURL: "YOUR_DATABASE_URL",
-};
+    apiKey: "AIzaSyDwxKZSVy687iV26zw4Uu2N8-jLQOMo0HU",
+    authDomain: "pulse-vibe-53ebb.firebaseapp.com",
+    projectId: "pulse-vibe-53ebb",
+    storageBucket: "pulse-vibe-53ebb.firebasestorage.app",
+    messagingSenderId: "93642702141",
+    appId: "1:93642702141:web:b278ba16a754def6969954",
+    measurementId: "G-D365D3GWK3"
+  };
 
 // Initialize Firebase
 const app = firebase.initializeApp(firebaseConfig);
