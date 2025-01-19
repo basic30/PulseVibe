@@ -6,8 +6,6 @@
     <title>Pulse Vibe</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://www.youtube.com/iframe_api"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
 </head>
 <body>
     <header>
@@ -64,16 +62,16 @@
     measurementId: "G-D365D3GWK3"
   };
 
-        const app = firebase.initializeApp(firebaseConfig);
-        const auth = getAuth();
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
 
         const loginBtn = document.getElementById("login-btn");
         const userProfile = document.getElementById("user-profile");
 
-        login-btn.addEventListener("click", async () => {
-            const provider = new firebase.auth.GoogleAuthProvider();
+        loginBtn.addEventListener("click", async () => {
+            const provider = new GoogleAuthProvider(app);
             try {
-                const result = await auth.signInWithRedirect(provider);
+                const result = await signInWithRedirect(auth, provider);
                 const user = result.user;
                 displayUserInfo(user);
             } catch (error) {
