@@ -14,15 +14,63 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-const apiKey = "AIzaSyA7k6glBajX2aK8yx49FhqDL43VesRIG64"; // YouTube API key
+// YouTube API Key
+const apiKey = "AIzaSyA7k6glBajX2aK8yx49FhqDL43VesRIG64";
+
+// Global Variables
+let userEmail = "";
 let player;
 let currentIndex = 0;
 let isPlaying = false;
 let tempPlaylist = [];
 let favoriteSongs = [];
 let permanentPlaylist = [];
-let userEmail = "";
-let currentTrack = {}; // Store the currently playing track
+let currentTrack = {}; // Stores the currently playing track
+
+// DOM Content Loaded
+document.addEventListener("DOMContentLoaded", () => {
+    const searchIcon = document.getElementById("search-icon");
+    const searchBox = document.getElementById("search-box");
+    const searchButton = document.getElementById("search-button");
+    const userPhoto = document.getElementById("user-photo");
+
+    // Toggle Search Box
+    searchIcon.addEventListener("click", () => {
+        searchBox.style.display = searchBox.style.display === "block" ? "none" : "block";
+        if (searchBox.style.display === "block") searchBox.focus();
+    });
+
+    // Handle Search
+    searchButton.addEventListener("click", () => {
+        const searchQuery = searchBox.value.trim();
+        if (searchQuery) fetchRandomMusic(searchQuery);
+        else alert("Please enter a search query.");
+    });
+
+    // User Photo Logout
+    userPhoto.addEventListener("click", () => {
+        if (userEmail) {
+            const auth2 = gapi.auth2.getAuthInstance();
+            auth2.signOut().then(() => {
+                console.log("User signed out.");
+                userEmail = "";
+                userPhoto.src = "https://via.placeholder.com/40";
+                alert("You have been logged out.");
+            });
+        } else {
+            alert('Please sign in using the "Sign-In" button.');
+        }
+    });
+});
+
+// Google Sign-In Success Handler
+function onSignIn(googleUser) {
+    const profile = googleUser.getBasicProfile();
+    userEmail = profile.getEmail();
+    document.getElementById("user-photo").src = profile.getImageUrl();
+    alert(`Welcome, ${profile.getName()}!`);
+    fetchRandomMusic(); // Load music after login
+}
 
 // YouTube Player Initialization
 function onYouTubeIframeAPIReady() {
@@ -36,10 +84,11 @@ function onYouTubeIframeAPIReady() {
     });
 }
 
+// Player State Changes
 function onPlayerStateChange(event) {
     if (event.data === YT.PlayerState.PLAYING) {
         isPlaying = true;
-        updateMediaSession(); // Update notification controls
+        updateMediaSession();
     } else if (event.data === YT.PlayerState.PAUSED) {
         isPlaying = false;
         updateMediaSession();
@@ -54,10 +103,10 @@ function playMusic(videoId, title = "Unknown Title", channel = "Unknown Channel"
     player.loadVideoById(videoId);
     player.playVideo();
     document.getElementById("music-player").style.display = "block";
-    updateMediaSession(); // Update notification when the track changes
+    updateMediaSession();
 }
 
-// Play next/previous song
+// Play Next/Previous
 function playNext() {
     if (currentIndex < tempPlaylist.length - 1) {
         currentIndex++;
@@ -74,18 +123,18 @@ function playPrevious() {
     }
 }
 
-// Add to favorites
+// Add to Favorites
 function addToFavorites(videoId, title, channel) {
     if (!favoriteSongs.some((song) => song.videoId === videoId)) {
         favoriteSongs.push({ videoId, title, channel });
         saveUserData(); // Save to Firebase
-        console.log("Added to favorites:", title);
+        alert(`${title} added to favorites.`);
     } else {
-        alert("Song is already in your favorites.");
+        alert("This song is already in your favorites.");
     }
 }
 
-// Save user data (favorites and playlist) to Firebase
+// Save User Data to Firebase
 async function saveUserData() {
     if (!userEmail) return;
     try {
@@ -99,7 +148,7 @@ async function saveUserData() {
     }
 }
 
-// Media Session API - Notification Controls
+// MediaSession API for Notification Controls
 function updateMediaSession() {
     if ("mediaSession" in navigator) {
         navigator.mediaSession.metadata = new MediaMetadata({
@@ -117,57 +166,40 @@ function updateMediaSession() {
             player.playVideo();
             isPlaying = true;
         });
-
         navigator.mediaSession.setActionHandler("pause", () => {
             player.pauseVideo();
             isPlaying = false;
         });
-
         navigator.mediaSession.setActionHandler("previoustrack", playPrevious);
         navigator.mediaSession.setActionHandler("nexttrack", playNext);
         navigator.mediaSession.setActionHandler("seekforward", () => {
-            const currentTime = player.getCurrentTime();
-            player.seekTo(currentTime + 10); // Forward by 10 seconds
+            player.seekTo(player.getCurrentTime() + 10);
         });
         navigator.mediaSession.setActionHandler("seekbackward", () => {
-            const currentTime = player.getCurrentTime();
-            player.seekTo(currentTime - 10); // Backward by 10 seconds
-        });
-
-        // Custom action for adding to favorites
-        navigator.mediaSession.setActionHandler("custom", () => {
-            addToFavorites(currentTrack.videoId, currentTrack.title, currentTrack.channel);
+            player.seekTo(player.getCurrentTime() - 10);
         });
     }
 }
 
-// Initialize (Fetch random music on load)
-window.onload = () => {
-    fetchRandomMusic();
-};
-
-// Fetch and display random music
-async function fetchRandomMusic(query = "random music") {
+// Fetch Random or Searched Music
+async function fetchRandomMusic(query = "popular songs") {
     try {
         const response = await fetch(
             `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=5&q=${query}&key=${apiKey}`
         );
         const data = await response.json();
 
-        if (data.items) {
-            displayMusic(data.items);
-        } else {
-            console.error("No music found.");
-        }
+        if (data.items) displayMusic(data.items);
+        else console.error("No music found.");
     } catch (error) {
         console.error("Error fetching music:", error);
     }
 }
 
-// Display music (random or searched)
+// Display Music
 function displayMusic(videos) {
     const musicContainer = document.getElementById("random-music");
-    musicContainer.innerHTML = ""; // Clear existing music items
+    musicContainer.innerHTML = ""; // Clear previous results
 
     videos.forEach((video) => {
         const musicItem = document.createElement("div");
@@ -181,3 +213,6 @@ function displayMusic(videos) {
         musicContainer.appendChild(musicItem);
     });
 }
+
+// Load Random Music on Page Load
+window.onload = () => fetchRandomMusic();
