@@ -7,6 +7,7 @@
     <title>Pulse Vibe</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
     <script defer src="script.js"></script>
 </head>
 <body>
@@ -17,6 +18,7 @@
             <span id="notification-icon">🔔</span>
             <span id="search-icon">🔍</span>
             <input type="text" id="search-box" placeholder="Search for music..." style="display: none;">
+            <button id="search-button" style="display: none;">Search</button>
             <img id="user-photo" src="https://via.placeholder.com/40" alt="User Profile" class="profile-icon">
         </div>
     </header>
@@ -25,6 +27,9 @@
     <main>
         <div id="random-music"></div>
     </main>
+
+    <!-- Hidden YouTube Player -->
+    <div id="hidden-player" style="display: none;"></div>
 
     <!-- Navigation Bar -->
     <nav class="bottom-nav">
