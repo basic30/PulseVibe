@@ -11,203 +11,169 @@ const firebaseConfig = {
   };
 
 // Initialize Firebase
-const app = firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.database();
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-// DOM Elements
-const loginBtn = document.getElementById("login-btn");
-const logoutBtn = document.getElementById("logout-btn");
-const searchInput = document.getElementById("search-input");
-const searchBtn = document.getElementById("search-btn");
-const backBtn = document.getElementById("back-btn");
-const songsContainer = document.getElementById("songs");
-const favoritesContainer = document.getElementById("favorites");
-const playlistContainer = document.getElementById("playlist");
-
-let currentUser = null;
+const apiKey = 'AIzaSyA7k6glBajX2aK8yx49FhqDL43VesRIG64'; // Replace with your YouTube API key
 let player;
+let currentIndex = 0;
+let isPlaying = false;
+let tempPlaylist = [];
+let favoriteSongs = [];
+let permanentPlaylist = [];
+let userEmail = '';
 
-// YouTube API Key
-const YOUTUBE_API_KEY = 'AIzaSyA7k6glBajX2aK8yx49FhqDL43VesRIG64';
-
-// YouTube Player API
+// Load YouTube IFrame API
 function onYouTubeIframeAPIReady() {
-    // Initialize YouTube player without showing the video
-    player = new YT.Player('player', {
+    player = new YT.Player('hidden-player', {
         height: '0',
         width: '0',
-        videoId: '',
-        playerVars: {
-            'autoplay': 1,
-            'controls': 0, // Hide video controls
-            'showinfo': 0, // Hide video information
-            'modestbranding': 1, // Hide branding
-            'rel': 0, // Disable related videos
-            'iv_load_policy': 3 // Disable annotations
-        },
         events: {
-            'onStateChange': onPlayerStateChange
+            onReady: () => console.log('YouTube Player is ready'),
+            onStateChange: onPlayerStateChange,
+        },
+    });
+}
+
+function onPlayerStateChange(event) {
+    if (event.data === YT.PlayerState.ENDED) {
+        playNext();
+    }
+}
+
+// Google Sign-In
+function onSignIn(googleUser) {
+    const profile = googleUser.getBasicProfile();
+    userEmail = profile.getEmail();
+    document.getElementById('user-photo').src = profile.getImageUrl();
+    document.getElementById('user-photo').style.display = 'block';
+    document.getElementById('logout-button').style.display = 'block';
+    loadUserData();
+}
+
+function signOut() {
+    const auth2 = gapi.auth2.getAuthInstance();
+    auth2.signOut().then(() => {
+        console.log('User signed out.');
+        userEmail = '';
+        document.getElementById('user-photo').style.display = 'none';
+        document.getElementById('logout-button').style.display = 'none';
+        clearUserData();
+    });
+}
+
+// Load user data (favorites and playlist) from Firebase
+async function loadUserData() {
+    try {
+        const userDoc = await db.collection('users').doc(userEmail).get();
+        if (userDoc.exists) {
+            const data = userDoc.data();
+            favoriteSongs = data.favorites || [];
+            permanentPlaylist = data.playlist || [];
+            updateFavoriteUI();
+            updatePlaylistUI();
+            console.log('User data loaded:', data);
+        } else {
+            console.log('No user data found, initializing empty data.');
+            favoriteSongs = [];
+            permanentPlaylist = [];
         }
-    });
+    } catch (error) {
+        console.error('Error loading user data:', error);
+    }
 }
 
-// Fetch Random Songs using YouTube Data API
-function fetchRandomSongs() {
-    // Example of a random query or you can replace with any query like "random songs"
-    const query = "popular songs"; 
-
-    const apiUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${query}&key=${YOUTUBE_API_KEY}&type=video`;
-
-    fetch(apiUrl)
-        .then(response => response.json())
-        .then(data => {
-            const songs = data.items.map(item => {
-                return { title: item.snippet.title, videoId: item.id.videoId };
-            });
-            renderSongs(songs);
-        })
-        .catch(error => {
-            console.error('Error fetching YouTube data:', error);
+// Save user data (favorites and playlist) to Firebase
+async function saveUserData() {
+    try {
+        await db.collection('users').doc(userEmail).set({
+            favorites: favoriteSongs,
+            playlist: permanentPlaylist,
         });
+        console.log('User data saved successfully!');
+    } catch (error) {
+        console.error('Error saving user data:', error);
+    }
 }
 
-// Render Songs
-function renderSongs(songs) {
-    songsContainer.innerHTML = "";
-    songs.forEach((song) => {
-        const div = document.createElement("div");
-        div.textContent = song.title;
-        const playBtn = document.createElement("button");
-        playBtn.textContent = "Play Audio";
-        playBtn.addEventListener("click", () => playSong(song.videoId));
+function clearUserData() {
+    favoriteSongs = [];
+    permanentPlaylist = [];
+    updateFavoriteUI();
+    updatePlaylistUI();
+}
 
-        div.appendChild(playBtn);
-        songsContainer.appendChild(div);
+// Fetch and display random music
+async function fetchRandomMusic() {
+    try {
+        const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=5&q=random&key=${apiKey}`);
+        const data = await response.json();
+        displayRandomMusic(data.items);
+    } catch (error) {
+        console.error('Error fetching random music:', error);
+    }
+}
+
+function displayRandomMusic(videos) {
+    const randomMusicContainer = document.getElementById('random-music');
+    randomMusicContainer.innerHTML = '';
+    videos.forEach((video) => {
+        const musicItem = document.createElement('div');
+        musicItem.innerHTML = `
+            <h3>${video.snippet.title}</h3>
+            <button onclick="addToFavorites('${video.id.videoId}', '${video.snippet.title}', '${video.snippet.channelTitle}')">❤️</button>
+            <button onclick="addToPlaylist('${video.id.videoId}', '${video.snippet.title}', '${video.snippet.channelTitle}')">➕</button>
+        `;
+        randomMusicContainer.appendChild(musicItem);
     });
 }
 
-// Play Song (Audio Only)
-function playSong(videoId) {
-    if (!currentUser) return alert("Please log in first!");
-
-    player.loadVideoById(videoId);  // Loads the video but hides the video player
-    alert("Playing song audio...");
+// Add to favorites
+function addToFavorites(videoId, title, channel) {
+    if (!favoriteSongs.some(song => song.videoId === videoId)) {
+        favoriteSongs.push({ videoId, title, channel });
+        saveUserData(); // Save to Firebase
+        console.log('Added to favorites:', title);
+    }
 }
 
-// Add to Playlist
-function addToPlaylist(song) {
-    if (!currentUser) return alert("Please log in first!");
-
-    db.ref(`users/${currentUser.uid}/playlist`).push(song)
-        .then(() => alert(`${song.title} added to playlist.`))
-        .catch(console.error);
+// Add to playlist
+function addToPlaylist(videoId, title, channel) {
+    if (!permanentPlaylist.some(song => song.videoId === videoId)) {
+        permanentPlaylist.push({ videoId, title, channel });
+        saveUserData(); // Save to Firebase
+        console.log('Added to playlist:', title);
+    }
 }
 
-// Add to Favorites
-function addToFavorites(song) {
-    if (!currentUser) return alert("Please log in first!");
-
-    db.ref(`users/${currentUser.uid}/favorites`).push(song)
-        .then(() => alert(`${song.title} added to favorites.`))
-        .catch(console.error);
+// Play music
+function playMusic(videoId) {
+    player.loadVideoById(videoId);
+    document.getElementById('music-player').style.display = 'block';
 }
 
-// Login
-loginBtn.addEventListener("click", () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider)
-        .then((result) => {
-            const user = result.user;
-            currentUser = user;
-            alert(`Welcome ${user.displayName}`);
-            loginBtn.style.display = "none";
-            logoutBtn.style.display = "block";
-            fetchUserData(user.uid);
-        })
-        .catch((error) => {
-            console.error(error);
-        });
+// Play next/previous song
+function playNext() {
+    if (currentIndex < tempPlaylist.length - 1) {
+        currentIndex++;
+        playMusic(tempPlaylist[currentIndex].videoId);
+    }
+}
+
+function playPrevious() {
+    if (currentIndex > 0) {
+        currentIndex--;
+        playMusic(tempPlaylist[currentIndex].videoId);
+    }
+}
+
+// Event listeners
+document.getElementById('search-button').addEventListener('click', () => {
+    const query = document.getElementById('search').value;
+    fetchRandomMusic(query);
 });
 
-// Logout
-logoutBtn.addEventListener("click", () => {
-    auth.signOut()
-        .then(() => {
-            alert("You have logged out.");
-            loginBtn.style.display = "block";
-            logoutBtn.style.display = "none";
-            favoritesContainer.innerHTML = "";
-            playlistContainer.innerHTML = "";
-            songsContainer.innerHTML = "";
-        })
-        .catch((error) => {
-            console.error(error);
-        });
-});
+document.getElementById('logout-button').addEventListener('click', signOut);
 
-// Fetch User Data
-function fetchUserData(userId) {
-    // Favorites
-    db.ref(`users/${userId}/favorites`).on("value", (snapshot) => {
-        const favorites = snapshot.val();
-        renderFavorites(favorites);
-    });
-
-    // Playlist
-    db.ref(`users/${userId}/playlist`).on("value", (snapshot) => {
-        const playlist = snapshot.val();
-        renderPlaylist(playlist);
-    });
-}
-
-function renderFavorites(favorites) {
-    favoritesContainer.innerHTML = "";
-    if (!favorites) return;
-
-    Object.values(favorites).forEach((song) => {
-        const div = document.createElement("div");
-        div.textContent = song.title;
-        favoritesContainer.appendChild(div);
-    });
-}
-
-function renderPlaylist(playlist) {
-    playlistContainer.innerHTML = "";
-    if (!playlist) return;
-
-    Object.values(playlist).forEach((song) => {
-        const div = document.createElement("div");
-        div.textContent = song.title;
-        playlistContainer.appendChild(div);
-    });
-}
-
-// Search Functionality
-searchBtn.addEventListener("click", () => {
-    const query = searchInput.value;
-    if (!query) return;
-
-    // Simulate Search Results using YouTube API
-    const apiUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${query}&key=${YOUTUBE_API_KEY}&type=video`;
-
-    fetch(apiUrl)
-        .then(response => response.json())
-        .then(data => {
-            const results = data.items.map(item => ({
-                title: item.snippet.title,
-                videoId: item.id.videoId
-            }));
-            renderSongs(results);
-            backBtn.style.display = "inline";
-        })
-        .catch(error => console.error(error));
-});
-
-backBtn.addEventListener("click", () => {
-    fetchRandomSongs();
-    backBtn.style.display = "none";
-});
-
-// Initial Load
-fetchRandomSongs();
+// Initialize
+window.onload = fetchRandomMusic;
