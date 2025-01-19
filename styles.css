@@ -76,26 +76,50 @@ header p {
     border-radius: 5px;
 }
 
-/* Profile Section */
+/* Profile Picture */
 #profile-pic {
-    width: 40px;
-    height: 40px;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    display: none; /* Initially hidden */
 }
 
+/* Logout Menu */
 #logout-menu {
-    display: none;
     position: absolute;
-    top: 50px;
-    right: 10px;
-    background: #282828;
-    padding: 10px;
+    top: 80px;
+    right: 20px;
+    background-color: #282828;
+    color: white;
     border-radius: 5px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    display: none;
+    animation: fadeIn 0.3s ease-in-out;
+    z-index: 10;
 }
 
-/* Fade-in animation */
+#logout-menu button {
+    background-color: #ff0000;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+#logout-menu button:hover {
+    background-color: #cc0000;
+}
+
+/* Fade-in Animation */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -105,8 +129,4 @@ header p {
         opacity: 1;
         transform: translateY(0);
     }
-}
-
-#logout-menu {
-    animation: fadeIn 0.3s ease-in-out;
 }
