@@ -37,6 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Toggle Search Box
     searchIcon.addEventListener("click", () => {
         searchBox.style.display = searchBox.style.display === "block" ? "none" : "block";
+        searchButton.style.display = searchBox.style.display;
         if (searchBox.style.display === "block") searchBox.focus();
     });
 
@@ -102,7 +103,6 @@ function playMusic(videoId, title = "Unknown Title", channel = "Unknown Channel"
     currentTrack = { videoId, title, channel };
     player.loadVideoById(videoId);
     player.playVideo();
-    document.getElementById("music-player").style.display = "block";
     updateMediaSession();
 }
 
@@ -123,65 +123,7 @@ function playPrevious() {
     }
 }
 
-// Add to Favorites
-function addToFavorites(videoId, title, channel) {
-    if (!favoriteSongs.some((song) => song.videoId === videoId)) {
-        favoriteSongs.push({ videoId, title, channel });
-        saveUserData(); // Save to Firebase
-        alert(`${title} added to favorites.`);
-    } else {
-        alert("This song is already in your favorites.");
-    }
-}
-
-// Save User Data to Firebase
-async function saveUserData() {
-    if (!userEmail) return;
-    try {
-        await db.collection("users").doc(userEmail).set({
-            favorites: favoriteSongs,
-            playlist: permanentPlaylist,
-        });
-        console.log("User data saved successfully!");
-    } catch (error) {
-        console.error("Error saving user data:", error);
-    }
-}
-
-// MediaSession API for Notification Controls
-function updateMediaSession() {
-    if ("mediaSession" in navigator) {
-        navigator.mediaSession.metadata = new MediaMetadata({
-            title: currentTrack.title || "Unknown Title",
-            artist: currentTrack.channel || "Unknown Channel",
-            album: "Pulse Vibe",
-            artwork: [
-                { src: "https://via.placeholder.com/96", sizes: "96x96", type: "image/png" },
-                { src: "https://via.placeholder.com/128", sizes: "128x128", type: "image/png" },
-                { src: "https://via.placeholder.com/192", sizes: "192x192", type: "image/png" },
-            ],
-        });
-
-        navigator.mediaSession.setActionHandler("play", () => {
-            player.playVideo();
-            isPlaying = true;
-        });
-        navigator.mediaSession.setActionHandler("pause", () => {
-            player.pauseVideo();
-            isPlaying = false;
-        });
-        navigator.mediaSession.setActionHandler("previoustrack", playPrevious);
-        navigator.mediaSession.setActionHandler("nexttrack", playNext);
-        navigator.mediaSession.setActionHandler("seekforward", () => {
-            player.seekTo(player.getCurrentTime() + 10);
-        });
-        navigator.mediaSession.setActionHandler("seekbackward", () => {
-            player.seekTo(player.getCurrentTime() - 10);
-        });
-    }
-}
-
-// Fetch Random or Searched Music
+// Fetch Music
 async function fetchRandomMusic(query = "popular songs") {
     try {
         const response = await fetch(
@@ -212,6 +154,25 @@ function displayMusic(videos) {
         `;
         musicContainer.appendChild(musicItem);
     });
+}
+
+// MediaSession API for Notifications
+function updateMediaSession() {
+    if ("mediaSession" in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: currentTrack.title || "Unknown Title",
+            artist: currentTrack.channel || "Unknown Channel",
+            album: "Pulse Vibe",
+            artwork: [
+                { src: "https://via.placeholder.com/96", sizes: "96x96", type: "image/png" },
+            ],
+        });
+
+        navigator.mediaSession.setActionHandler("play", () => player.playVideo());
+        navigator.mediaSession.setActionHandler("pause", () => player.pauseVideo());
+        navigator.mediaSession.setActionHandler("previoustrack", playPrevious);
+        navigator.mediaSession.setActionHandler("nexttrack", playNext);
+    }
 }
 
 // Load Random Music on Page Load
