@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pulse Vibe</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
 </head>
@@ -14,6 +14,10 @@
     <header>
         <h1>__Pulse Vibe__</h1>
         <p>Feel the vibes!</p>
+        <img id="profile-pic" src="" alt="User Profile" />
+    <div id="logout-menu">
+        <button id="logout-button">Log Out</button>
+    </div>
     </header>
     <main>
         <!-- Search Bar -->
@@ -33,15 +37,8 @@
             <h2>Your Playlist</h2>
             <div id="permanent-playlist"></div> <!-- Dynamic playlist content -->
         </section>
-    </main>
-
-    <!-- Profile Section -->
-    <div id="profile-section">
-        <img id="profile-pic" src="" alt="Profile Picture" />
-        <div id="logout-menu">
-            <button id="logout-button">Logout</button>
-        </div>
-    </div>
+    </main>    
+    
 
     <!-- Music Player Controls -->
     <div id="music-player">
