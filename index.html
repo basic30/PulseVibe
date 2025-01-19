@@ -3,42 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="google-signin-client_id" content="177638854662-2hldr6iceg5sv9gauuel9p6u108trdii.apps.googleusercontent.com">
     <title>Pulse Vibe</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
-    <script defer src="script.js"></script>
 </head>
 <body>
-    <!-- Header -->
     <header>
-        <h2>Pulse Vibe</h2>
-        <div class="top-bar">
-            <span id="notification-icon">🔔</span>
-            <span id="search-icon">🔍</span>
-            <input type="text" id="search-box" placeholder="Search for music..." style="display: none;">
-            <button id="search-button" style="display: none;">Search</button>
-            <img id="user-photo" src="https://via.placeholder.com/40" alt="User Profile" class="profile-icon">
-        </div>
+        <h1>__Pulse Vibe__</h1>
+        <p>Feel the vibes!</p>
     </header>
-
-    <!-- Content -->
     <main>
-        <div id="random-music"></div>
+        <!-- Search Bar -->
+        <div id="search-container">
+            <input type="text" id="search" placeholder="Search for music..." />
+            <button id="search-button">🔍</button>
+        </div>
+
+        <!-- Search Results -->
+        <div id="music-list"></div>
+
+        <!-- Your Playlist Button -->
+        <button id="toggle-playlist-btn">Your Playlist</button>
+
+        <!-- Permanent Playlist Section -->
+        <section id="playlist-section" style="display: none;"> <!-- Hidden by default -->
+            <h2>Your Playlist</h2>
+            <div id="permanent-playlist"></div> <!-- Dynamic playlist content -->
+        </section>
     </main>
 
+    <!-- Profile Section -->
+    <div id="profile-section">
+        <img id="profile-pic" src="" alt="Profile Picture" />
+        <div id="logout-menu">
+            <button id="logout-button">Logout</button>
+        </div>
+    </div>
+
+    <!-- Music Player Controls -->
+    <div id="music-player">
+        <img id="channel-logo" src="" alt="Channel Logo" />
+        <div id="current-track">No track playing</div> <!-- Music name -->
+        <button id="prev">⏮️</button>
+        <button id="play-pause">▶️</button>
+        <button id="next">⏭️</button>
+    </div>
+
     <!-- Hidden YouTube Player -->
-    <div id="hidden-player" style="display: none;"></div>
+    <div id="hidden-player"></div>
 
-    <!-- Navigation Bar -->
-    <nav class="bottom-nav">
-        <button id="home-btn">Home</button>
-        <button id="favorite-btn">Favorite Music</button>
-        <button id="playlist-btn">Playlist</button>
-    </nav>
-
-    <!-- Google Sign-In -->
-    <div class="g-signin2" data-onsuccess="onSignIn" style="display: none;"></div>
+    <script src="script.js"></script>
 </body>
 </html>
