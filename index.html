@@ -3,52 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-signin-client_id" content="177638854662-2hldr6iceg5sv9gauuel9p6u108trdii.apps.googleusercontent.com">
     <title>Pulse Vibe</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://www.youtube.com/iframe_api"></script>
     <script src="https://apis.google.com/js/platform.js" async defer></script>
-    <meta name="google-signin-client_id" content="177638854662-2hldr6iceg5sv9gauuel9p6u108trdii.apps.googleusercontent.com">
+    <script defer src="script.js"></script>
 </head>
 <body>
     <!-- Header -->
     <header>
-        <div id="header-left">
-            <h1>Pulse Vibe</h1>
-        </div>
-        <div id="header-right">
-            <button id="notification-button">🔔</button>
-            <input type="text" id="search" placeholder="Search for music...">
-            <button id="search-button">🔍</button>
-            <div id="user-account">
-                <div id="g-signin2" data-onsuccess="onSignIn"></div>
-                <img id="user-photo" src="" alt="User Photo" style="display: none;">
-                <button id="logout-button" style="display: none;">Log Out</button>
-            </div>
+        <h4>Pulse Vibe</h4>
+        <div class="top-bar">
+            <span id="notification-icon">🔔</span>
+            <span id="search-icon">🔍</span>
+            <input type="text" id="search-box" placeholder="Search for music..." style="display: none;">
+            <img id="user-photo" src="https://via.placeholder.com/40" alt="User Profile" class="profile-icon">
         </div>
     </header>
 
-    <!-- Bottom Navigation -->
-    <nav>
-        <button id="home-button">Home</button>
-        <button id="favorite-button">Favorite Music</button>
-        <button id="playlist-button">Playlist</button>
-    </nav>
-
-    <!-- Main Content -->
+    <!-- Content -->
     <main>
         <div id="random-music"></div>
-        <div id="music-list"></div>
     </main>
 
-    <!-- Music Player -->
-    <div id="music-player" style="display: none;">
-        <img id="channel-logo" src="" alt="Channel Logo">
-        <div id="current-track">No track playing</div>
-        <button id="prev">⏮️</button>
-        <button id="play-pause">▶️</button>
-        <button id="next">⏭️</button>
-    </div>
+    <!-- Navigation Bar -->
+    <nav class="bottom-nav">
+        <button id="home-btn">Home</button>
+        <button id="favorite-btn">Favorite Music</button>
+        <button id="playlist-btn">Playlist</button>
+    </nav>
 
-    <script src="script.js"></script>
+    <!-- Google Sign-In -->
+    <div class="g-signin2" data-onsuccess="onSignIn" style="display: none;"></div>
 </body>
 </html>
