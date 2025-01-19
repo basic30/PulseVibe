@@ -5,41 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pulse Vibe</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="YOUR_CLIENT_ID.apps.googleusercontent.com">
 </head>
 <body>
-    <div class="header">
-        <div class="logo">__Pulse Vibe__</div>
-        <div>
-            <button id="login-btn">Login</button>
-            <button id="logout-btn" style="display: none;">Logout</button>
+    <!-- Header -->
+    <header>
+        <div id="header-left">
+            <h1>Pulse Vibe</h1>
         </div>
+        <div id="header-right">
+            <button id="notification-button">🔔</button>
+            <input type="text" id="search" placeholder="Search for music...">
+            <button id="search-button">🔍</button>
+            <div id="user-account">
+                <div id="g-signin2" data-onsuccess="onSignIn"></div>
+                <img id="user-photo" src="" alt="User Photo" style="display: none;">
+                <button id="logout-button" style="display: none;">Log Out</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Bottom Navigation -->
+    <nav>
+        <button id="home-button">Home</button>
+        <button id="favorite-button">Favorite Music</button>
+        <button id="playlist-button">Playlist</button>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <div id="random-music"></div>
+        <div id="music-list"></div>
+    </main>
+
+    <!-- Music Player -->
+    <div id="music-player" style="display: none;">
+        <img id="channel-logo" src="" alt="Channel Logo">
+        <div id="current-track">No track playing</div>
+        <button id="prev">⏮️</button>
+        <button id="play-pause">▶️</button>
+        <button id="next">⏭️</button>
     </div>
 
-    <div class="content">
-        <div class="search-bar">
-            <input type="text" id="search-input" placeholder="Search songs...">
-            <button id="search-btn">Search</button>
-            <button id="back-btn" style="display: none;">Back</button>
-        </div>
-        <div class="song-list" id="songs"></div>
-        <div class="favorites">
-            <h3>Favorites</h3>
-            <div id="favorites"></div>
-        </div>
-        <div class="playlist">
-            <h3>Playlist</h3>
-            <div id="playlist"></div>
-        </div>
-    </div>
-
-    <div class="footer">
-        © 2025 Music App
-    </div>
-
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.18.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.18.0/firebase-database.js"></script>
-    <script src="app.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
