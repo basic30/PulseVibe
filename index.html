@@ -46,16 +46,23 @@
     <div id="hidden-player"></div>
 
     <script>
-        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyDwxKZSVy687iV26zw4Uu2N8-jLQOMo0HU",
-  authDomain: "pulse-vibe-53ebb.firebaseapp.com",
-  databaseURL: "https://pulse-vibe-53ebb-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "pulse-vibe-53ebb",
-  storageBucket: "pulse-vibe-53ebb.firebasestorage.app",
-  messagingSenderId: "93642702141",
-  appId: "1:93642702141:web:b278ba16a754def6969954"
-};
+
+        <script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-analytics.js";
+  import { GoogleAuthProvider } from "firebase/auth";
+        
+  const firebaseConfig = {
+    apiKey: "AIzaSyDwxKZSVy687iV26zw4Uu2N8-jLQOMo0HU",
+    authDomain: "pulse-vibe-53ebb.firebaseapp.com",
+    databaseURL: "https://pulse-vibe-53ebb-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "pulse-vibe-53ebb",
+    storageBucket: "pulse-vibe-53ebb.firebasestorage.app",
+    messagingSenderId: "93642702141",
+    appId: "1:93642702141:web:b278ba16a754def6969954",
+    measurementId: "G-D365D3GWK3"
+  };
 
         const app = firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
