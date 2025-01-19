@@ -6,6 +6,7 @@ const firebaseConfig = {
     storageBucket: "pulse-vibe-53ebb.firebasestorage.app",
     messagingSenderId: "93642702141",
     appId: "1:93642702141:web:b278ba16a754def6969954",
+    databaseURL: "https://pulse-vibe-53ebb-default-rtdb.asia-southeast1.firebasedatabase.app/",
     measurementId: "G-D365D3GWK3"
   };
 
