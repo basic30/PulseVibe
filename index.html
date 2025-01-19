@@ -5,46 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pulse Vibe</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://www.youtube.com/iframe_api"></script>
 </head>
 <body>
-    <header>
-        <h1>__Pulse Vibe__</h1>
-        <p>Feel the vibes !</p>
-    </header>
-    <main>
-        <!-- Search Bar -->
-        <div id="search-container">
-            <input type="text" id="search" placeholder="Search for music..." />
-            <button id="search-button">🔍</button>
+    <div class="header">
+        <div class="logo">__Pulse Vibe__</div>
+        <div>
+            <button id="login-btn">Login</button>
+            <button id="logout-btn" style="display: none;">Logout</button>
         </div>
-
-        <!-- Search Results -->
-        <div id="music-list"></div>
-
-        <!-- Your Playlist Button -->
-        <button id="toggle-playlist-btn">Your Playlist</button>
-
-        <!-- Temporary Playlist Section -->
-        <section id="playlist-section" style="display: none;"> <!-- Hidden by default -->
-            <h2>Your Playlist</h2>
-            <div id="temp-playlist"></div> <!-- Dynamic playlist content -->
-            <button id="clear-playlist">Clear Playlist</button>
-        </section>
-    </main>
-
-    <!-- Music Player Controls -->
-    <div id="music-player">
-        <img id="channel-logo" src="" alt="Channel Logo" />
-        <div id="current-track">No track playing</div> <!-- Music name -->
-        <button id="prev">⏮️</button>
-        <button id="play-pause">▶️</button>
-        <button id="next">⏭️</button>
     </div>
 
-    <!-- Hidden YouTube Player -->
-    <div id="hidden-player"></div>
+    <div class="content">
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Search songs...">
+            <button id="search-btn">Search</button>
+            <button id="back-btn" style="display: none;">Back</button>
+        </div>
+        <div class="song-list" id="songs"></div>
+        <div class="favorites">
+            <h3>Favorites</h3>
+            <div id="favorites"></div>
+        </div>
+        <div class="playlist">
+            <h3>Playlist</h3>
+            <div id="playlist"></div>
+        </div>
+    </div>
 
-    <script src="script.js"></script>
+    <div class="footer">
+        © 2025 Music App
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.18.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.18.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.18.0/firebase-database.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
