@@ -45,9 +45,7 @@
 
     <script>
 
-  // Import the functions you need from the SDKs you need
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-analytics.js";
   import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
         
   const firebaseConfig = {
@@ -57,10 +55,11 @@
     projectId: "pulse-vibe-53ebb",
     storageBucket: "pulse-vibe-53ebb.firebasestorage.app",
     messagingSenderId: "93642702141",
-    appId: "1:93642702141:web:b278ba16a754def6969954",
-    measurementId: "G-D365D3GWK3"
+    appId: "1:93642702141:web:f9bdae2f679a41fd969954",
+    measurementId: "G-5V2PJ3YL1Q"
   };
 
+        
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider(app);
